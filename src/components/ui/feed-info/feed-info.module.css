@@ -1,34 +1,35 @@
 .columns {
-  display: flex;
-  justify-content: left;
-  align-items: flex-start;
+	display: flex;
+	justify-content: left;
+	align-items: flex-start;
 }
+
 .column {
-  display: inline;
-  min-width: 50%;
+	display: inline;
+	min-width: 50%;
 }
 
 .list {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  max-height: 180px;
-  margin: 0;
-  padding-left: 0;
-  overflow: hidden;
-  list-style: none;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	max-height: 180px;
+	margin: 0;
+	padding-left: 0;
+	overflow: hidden;
+	list-style: none;
 }
 
 .title {
-  margin: 0;
-  text-align: left;
+	margin: 0;
+	text-align: left;
 }
 
 .list_item {
-  min-width: 50%;
-  text-align: left;
+	min-width: 50%;
+	text-align: left;
 }
 
 .content {
-  text-align: left;
+	text-align: left;
 }

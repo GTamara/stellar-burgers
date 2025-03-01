@@ -5,10 +5,10 @@ import styles from './app.module.css';
 import { AppHeader } from '@components';
 
 const App = () => (
-  <div className={styles.app}>
-    <AppHeader />
-    <ConstructorPage />
-  </div>
+	<div className={styles.app}>
+		<AppHeader />
+		<ConstructorPage />
+	</div>
 );
 
 export default App;
