@@ -32,7 +32,13 @@ module.exports = {
 					{
 						loader: 'css-loader',
 						options: {
-							modules: true
+							modules: {
+								mode: 'local',
+								localIdentName:
+									'[name]__[local]__[hash:base64:5]',
+								auto: /\.module\.\w+$/i,
+								namedExport: false
+							}
 						}
 					}
 				]
@@ -48,9 +54,9 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new ESLintPlugin({
-			extensions: ['.js', '.jsx', '.ts', '.tsx']
-		}),
+		// new ESLintPlugin({
+		// 	extensions: ['.js', '.jsx', '.ts', '.tsx']
+		// }),
 		new HtmlWebpackPlugin({
 			template: './public/index.html'
 		}),

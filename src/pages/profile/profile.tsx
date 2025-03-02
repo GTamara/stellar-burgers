@@ -14,13 +14,14 @@ export const Profile: FC = () => {
 		password: ''
 	});
 
-	useEffect(() => {
-		setFormValue((prevState) => ({
-			...prevState,
-			name: user?.name || '',
-			email: user?.email || ''
-		}));
-	}, [user]);
+	/** TODO: разобраться, почему тут возникает ошибка Maximum calls stack */
+	// useEffect(() => {
+	// 	setFormValue((prevState) => ({
+	// 		...prevState,
+	// 		name: user?.name || '',
+	// 		email: user?.email || ''
+	// 	}));
+	// }, [user]);
 
 	const isFormChanged =
 		formValue.name !== user?.name ||
