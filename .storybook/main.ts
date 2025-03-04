@@ -13,12 +13,15 @@ const config: StorybookConfig = {
 		config.resolve
 			? (config.resolve.alias = {
 					...config.resolve.alias,
-					'@pages': path.resolve(__dirname, '../src/pages'),
-					'@components': path.resolve(__dirname, '../src/components'),
-					'@ui': path.resolve(__dirname, '../src/components/ui'),
+					'@pages': path.resolve(__dirname, '../src/pages/*'),
+					'@components': path.resolve(
+						__dirname,
+						'../src/components/*'
+					),
+					'@ui': path.resolve(__dirname, '../src/components/ui/*'),
 					'@ui-pages': path.resolve(
 						__dirname,
-						'../src/components/ui/pages'
+						'../src/components/ui/pages/*'
 					),
 					'@utils-types': path.resolve(
 						__dirname,
@@ -30,11 +33,11 @@ const config: StorybookConfig = {
 					),
 					'@slices': path.resolve(
 						__dirname,
-						'../src/services/slices'
+						'../src/services/slices/*'
 					),
 					'@selectors': path.resolve(
 						__dirname,
-						'../src/services/selectors'
+						'../src/services/selectors/*'
 					)
 				})
 			: null;

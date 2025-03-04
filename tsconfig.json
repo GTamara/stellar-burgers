@@ -17,6 +17,7 @@
 		"jsx": "react-jsx",
 		"types": ["node", "jest"],
 		"baseUrl": ".",
+		"sourceMap": true,
 		"paths": {
 			"@pages": ["src/pages"],
 			"@components": ["src/components"],

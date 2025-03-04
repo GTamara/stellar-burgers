@@ -1,16 +1,28 @@
 import { useState, useRef, useEffect, FC } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-import { TIngredient, TTabMode } from '@utils-types';
+import { EIngredientType, TIngredient, TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
+// import { constructorSlice } from '../../services/slices/constructor';
+// import { useAppSelector } from 'src/services/store.ts';
+import {
+	RootState,
+	useAppSelector,
+	useAppDispatch,
+	AppDispatch
+} from '../../services/store';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	constructorSlice,
+	getIngredients
+} from '../../services/slices/burger-constructor';
 
 export const BurgerIngredients: FC = () => {
-	/** TODO: взять переменные из стора */
-	const buns: TIngredient[] = [];
-	const mains: TIngredient[] = [];
-	const sauces: TIngredient[] = [];
+	const ingredientsByType = useAppSelector(
+		(state: RootState) => state[constructorSlice.name].ingredientsByType
+	);
 
-	const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
+	const [currentTab, setCurrentTab] = useState<TTabMode>(EIngredientType.bun);
 	const titleBunRef = useRef<HTMLHeadingElement>(null);
 	const titleMainRef = useRef<HTMLHeadingElement>(null);
 	const titleSaucesRef = useRef<HTMLHeadingElement>(null);
@@ -26,6 +38,12 @@ export const BurgerIngredients: FC = () => {
 	const [saucesRef, inViewSauces] = useInView({
 		threshold: 0
 	});
+
+	const dispatch: AppDispatch = useAppDispatch();
+
+	useEffect(() => {
+		dispatch(getIngredients());
+	}, []);
 
 	useEffect(() => {
 		if (inViewBuns) {
@@ -47,14 +65,12 @@ export const BurgerIngredients: FC = () => {
 			titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
 	};
 
-	// return null;
-
 	return (
 		<BurgerIngredientsUI
 			currentTab={currentTab}
-			buns={buns}
-			mains={mains}
-			sauces={sauces}
+			buns={ingredientsByType?.bun ?? []}
+			mains={ingredientsByType?.main ?? []}
+			sauces={ingredientsByType?.sauce ?? []}
 			titleBunRef={titleBunRef}
 			titleMainRef={titleMainRef}
 			titleSaucesRef={titleSaucesRef}

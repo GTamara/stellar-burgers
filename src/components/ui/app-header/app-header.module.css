@@ -23,6 +23,7 @@
 
 .link_active {
 	color: var(--text-primary-color);
+	cursor: default;
 }
 
 .link_position_last {

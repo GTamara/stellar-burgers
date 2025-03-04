@@ -2,7 +2,7 @@ const path = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
-const { webpack } = require('webpack');
+const webpack = require('webpack');
 
 module.exports = {
 	entry: path.resolve(__dirname, './src/index.tsx'),
@@ -33,7 +33,13 @@ module.exports = {
 					{
 						loader: 'css-loader',
 						options: {
-							modules: true
+							modules: {
+								mode: 'local',
+								localIdentName:
+									'[name]__[local]__[hash:base64:5]',
+								auto: /\.module\.\w+$/i,
+								namedExport: false
+							}
 						}
 					}
 				]
@@ -50,15 +56,15 @@ module.exports = {
 	},
 	plugins: [
 		// new ESLintPlugin({
-		//   extensions: ['.js', '.jsx', '.ts', '.tsx']
+		// 	extensions: ['.js', '.jsx', '.ts', '.tsx']
 		// }),
 		new HtmlWebpackPlugin({
 			template: './public/index.html'
 		}),
-		new Dotenv()
-		// new webpack.EnvironmentPlugin({
-		// 	NODE_ENV: 'development', // значение по умолчанию 'development' если переменная process.env.NODE_ENV не передана
-		// }),
+		new Dotenv(),
+		new webpack.EnvironmentPlugin({
+			NODE_ENV: 'development' // значение по умолчанию 'development' если переменная process.env.NODE_ENV не передана
+		})
 	],
 	resolve: {
 		extensions: [
@@ -83,16 +89,29 @@ module.exports = {
 			'@api': path.resolve(__dirname, './src/utils/burger-api.ts'),
 			'@slices': path.resolve(__dirname, './src/services/slices'),
 			'@selectors': path.resolve(__dirname, './src/services/selectors')
-		}
+		},
+		modules: [path.join(__dirname, 'node_modules')]
 	},
+	// resolveLoader: {
+	// 	modules: [
+	// 		path.join(__dirname, 'node_modules')
+	// 	],
+	// },
 	output: {
 		path: path.resolve(__dirname, './dist'),
-		filename: 'bundle.js'
+		// filename: 'bundle.js',
+		filename: '[name].js',
+		chunkFilename: '[id].[chunkhash].js'
 	},
 	devServer: {
 		static: path.join(__dirname, './dist'),
 		compress: true,
 		historyApiFallback: true,
 		port: 4000
+	},
+	optimization: {
+		runtimeChunk: {
+			name: (entrypoint) => `runtime~${entrypoint.name}`
+		}
 	}
 };

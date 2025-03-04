@@ -1,14 +1,12 @@
 import { setCookie, getCookie } from './cookie';
-import { TIngredient, TOrder, TOrdersData, TUser } from './types';
+import { TFeedsResponse, TOrder, TServerResponse } from './data-contracts';
+import { TIngredient, TOrdersData, TUser } from './types';
 
-const URL = process.env.BURGER_API_URL;
+// const URL = process.env.BURGER_API_URL;
+const URL = 'https://norma.nomoreparties.space/api';
 
 const checkResponse = <T>(res: Response): Promise<T> =>
 	res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
-
-type TServerResponse<T> = {
-	success: boolean;
-} & T;
 
 type TRefreshResponse = TServerResponse<{
 	refreshToken: string;
@@ -61,12 +59,6 @@ type TIngredientsResponse = TServerResponse<{
 	data: TIngredient[];
 }>;
 
-type TFeedsResponse = TServerResponse<{
-	orders: TOrder[];
-	total: number;
-	totalToday: number;
-}>;
-
 type TOrdersResponse = TServerResponse<{
 	data: TOrder[];
 }>;
@@ -83,6 +75,7 @@ export const getFeedsApi = () =>
 	fetch(`${URL}/orders/all`)
 		.then((res) => checkResponse<TFeedsResponse>(res))
 		.then((data) => {
+			console.log(data);
 			if (data?.success) return data;
 			return Promise.reject(data);
 		});

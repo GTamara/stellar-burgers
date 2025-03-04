@@ -1,3 +1,5 @@
+import { TOrder } from './data-contracts';
+
 export type TIngredient = {
 	_id: string;
 	name: string;
@@ -16,16 +18,6 @@ export type TConstructorIngredient = TIngredient & {
 	id: string;
 };
 
-export type TOrder = {
-	_id: string;
-	status: string;
-	name: string;
-	createdAt: string;
-	updatedAt: string;
-	number: number;
-	ingredients: string[];
-};
-
 export type TOrdersData = {
 	orders: TOrder[];
 	total: number;
@@ -37,4 +29,10 @@ export type TUser = {
 	name: string;
 };
 
-export type TTabMode = 'bun' | 'sauce' | 'main';
+export type TTabMode = keyof typeof EIngredientType; //'bun' | 'sauce' | 'main';
+
+export enum EIngredientType {
+	bun = 'bun',
+	main = 'main',
+	sauce = 'sauce'
+}
