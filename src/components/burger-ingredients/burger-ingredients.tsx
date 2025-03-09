@@ -3,23 +3,28 @@ import { useInView } from 'react-intersection-observer';
 
 import { EIngredientType, TIngredient, TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
-// import { constructorSlice } from '../../services/slices/constructor';
-// import { useAppSelector } from 'src/services/store.ts';
-import {
-	RootState,
-	useAppSelector,
-	useAppDispatch,
-	AppDispatch
-} from '../../services/store';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-	constructorSlice,
-	getIngredients
-} from '../../services/slices/burger-constructor';
+import { useAppSelector } from '../../services/store';
+import { allIngredientsSelector } from '../../services/selectors/burger-constructor';
 
 export const BurgerIngredients: FC = () => {
-	const ingredientsByType = useAppSelector(
-		(state: RootState) => state[constructorSlice.name].ingredientsByType
+	const allIngredients = useAppSelector(allIngredientsSelector);
+
+	const specifiedTypeIngredientsSelector = (
+		allIngredients: TIngredient[],
+		type: EIngredientType
+	) => allIngredients.filter((item: TIngredient) => item.type === type);
+
+	const buns = specifiedTypeIngredientsSelector(
+		allIngredients,
+		EIngredientType.bun
+	);
+	const mains = specifiedTypeIngredientsSelector(
+		allIngredients,
+		EIngredientType.main
+	);
+	const sauces = specifiedTypeIngredientsSelector(
+		allIngredients,
+		EIngredientType.sauce
 	);
 
 	const [currentTab, setCurrentTab] = useState<TTabMode>(EIngredientType.bun);
@@ -38,12 +43,6 @@ export const BurgerIngredients: FC = () => {
 	const [saucesRef, inViewSauces] = useInView({
 		threshold: 0
 	});
-
-	const dispatch: AppDispatch = useAppDispatch();
-
-	useEffect(() => {
-		dispatch(getIngredients());
-	}, []);
 
 	useEffect(() => {
 		if (inViewBuns) {
@@ -68,9 +67,9 @@ export const BurgerIngredients: FC = () => {
 	return (
 		<BurgerIngredientsUI
 			currentTab={currentTab}
-			buns={ingredientsByType?.bun ?? []}
-			mains={ingredientsByType?.main ?? []}
-			sauces={ingredientsByType?.sauce ?? []}
+			buns={buns}
+			mains={mains}
+			sauces={sauces}
 			titleBunRef={titleBunRef}
 			titleMainRef={titleMainRef}
 			titleSaucesRef={titleSaucesRef}

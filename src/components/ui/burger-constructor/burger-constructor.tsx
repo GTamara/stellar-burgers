@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import {
 	Button,
 	ConstructorElement,
@@ -56,6 +56,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
 				</div>
 			)}
 		</ul>
+
 		{constructorItems.bun ? (
 			<div className={`${styles.element} mt-4 mr-4`}>
 				<ConstructorElement

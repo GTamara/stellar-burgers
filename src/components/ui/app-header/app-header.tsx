@@ -30,7 +30,6 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
 							</p>
 						</>
 					)}
-					{/* className={isActive ? s.link_active : ''} */}
 				</NavLink>
 				<NavLink
 					to={'/feed'}
@@ -60,7 +59,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
 								type={isActive ? 'primary' : 'secondary'}
 							/>
 							<p className='text text_type_main-default ml-2'>
-								Личный кабинет
+								{userName ? userName : 'Личный кабинет'}
 							</p>
 						</>
 					)}

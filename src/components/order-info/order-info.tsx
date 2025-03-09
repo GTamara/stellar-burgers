@@ -1,21 +1,47 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useAppDispatch, useAppSelector } from '../../services/store';
+import {
+	getOrderByNumber,
+	orderSelectors
+} from '../../services/slices/order.slice';
+import { TOrderResponse } from '../../utils/data-contracts';
+import { allIngredientsSelector } from '../../services/selectors/burger-constructor';
+import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
+	const dispatch = useAppDispatch();
+	const params = useParams();
+
+	useEffect(() => {
+		dispatch(getOrderByNumber(Number(params.number)));
+	}, []);
+
 	/** TODO: взять переменные orderData и ingredients из стора */
+
+	const currentViewedOrderData: TOrderResponse | null = useAppSelector(
+		orderSelectors.currentViewedOrderDataSelector
+	);
+
+	const allIngredients: TIngredient[] = useAppSelector(
+		allIngredientsSelector
+	);
+
 	const orderData = {
-		createdAt: '',
-		ingredients: [],
-		_id: '',
-		status: '',
-		name: '',
-		updatedAt: 'string',
-		number: 0
+		createdAt: currentViewedOrderData?.orders[0]?.createdAt || '',
+		ingredients: currentViewedOrderData?.orders[0]?.ingredients || [],
+		_id: currentViewedOrderData?.orders[0]?._id || '',
+		status: currentViewedOrderData?.orders[0]?.status || '',
+		name: currentViewedOrderData?.orders[0]?.name || '',
+		updatedAt: currentViewedOrderData?.orders[0]?.updatedAt || '',
+		number: currentViewedOrderData?.orders[0]?.number || 0
 	};
 
-	const ingredients: TIngredient[] = [];
+	const ingredients: TIngredient[] = allIngredients.filter((item) =>
+		orderData?.ingredients.includes(item._id)
+	);
 
 	/* Готовим данные для отображения */
 	const orderInfo = useMemo(() => {

@@ -1,13 +1,9 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 
 import { FeedInfoUI } from '../ui/feed-info';
-import {
-	AppDispatch,
-	useAppDispatch,
-	useAppSelector
-} from '../../services/store';
-import { getAllOrders, getFeeds } from '../../services/slices/order';
-import { TFeedsResponse, TOrder } from '../../utils/data-contracts';
+import { useAppSelector } from '../../services/store';
+import { TFeeds, TOrder } from '../../utils/data-contracts';
+import { allFeedsSelector } from '../../services/slices/feed.slice';
 
 const getOrders = (orders: TOrder[], status: string): number[] =>
 	orders
@@ -15,22 +11,10 @@ const getOrders = (orders: TOrder[], status: string): number[] =>
 		.map((item) => item.number)
 		.slice(0, 20);
 
-type FeedInfoProps = {
-	orders: TOrder[];
-};
-
 export const FeedInfo: FC = () => {
-	// const dispatch: AppDispatch = useAppDispatch();
-	// useEffect(() => {
-	// 	// dispatch(getAllOrders());
-	// 	dispatch(getFeeds());
-	// }, []);
-
 	/** TODO: взять переменные из стора */
 
-	const feedInfo: TFeedsResponse = useAppSelector(
-		(state) => state.order.feeds
-	) as TFeedsResponse; // {};
+	const feedInfo: TFeeds = useAppSelector(allFeedsSelector);
 	const { orders, ...feed } = feedInfo;
 
 	const readyOrders: number[] = getOrders(orders, 'done');

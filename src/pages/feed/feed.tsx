@@ -1,27 +1,25 @@
-import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-// import { TOrder } from '@utils-types';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import {
 	AppDispatch,
 	useAppDispatch,
 	useAppSelector
 } from '../../services/store';
-import { getAllOrders, getFeeds } from '../../services/slices/order';
 import { TFeeds, TOrder } from 'src/utils/data-contracts';
-import { getIngredients } from '../../services/slices/burger-constructor';
+import { getIngredients } from '../../services/slices/burger-constructor.slice';
+import { allFeedsSelector } from '../../services/slices/feed.slice';
 
 export const Feed: FC = () => {
 	const dispatch: AppDispatch = useAppDispatch();
-	useEffect(() => {
-		dispatch(getFeeds());
+
+	const handleGetFeeds = () => {
 		dispatch(getIngredients());
-	}, []);
+	};
 
 	// /** TODO: взять переменную из стора */
 
-	const feeds: TFeeds = useAppSelector((state) => state.order.feeds);
+	const feeds: TFeeds = useAppSelector(allFeedsSelector);
 	const orders: TOrder[] = (feeds ?? {})?.orders;
 
-	return <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+	return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };

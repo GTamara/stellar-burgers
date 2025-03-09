@@ -1,6 +1,4 @@
+import { createSelector } from '@reduxjs/toolkit';
 import { EIngredientType, TIngredient } from '@utils-types';
-
-export const specifiedTypeIngredientsSelector = (
-	allIngredients: TIngredient[],
-	specifiedType: EIngredientType
-) => allIngredients.filter((item: TIngredient) => item.type === specifiedType);
+import { RootState } from '../store';
+import { constructorSlice } from '../slices/burger-constructor.slice';

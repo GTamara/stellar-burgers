@@ -1,41 +1,21 @@
-import { FC, memo, useEffect, useMemo } from 'react';
+import { FC, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { OrderCardProps } from './type';
 import { TIngredient } from '@utils-types';
 import { OrderCardUI } from '../ui/order-card';
-import {
-	RootState,
-	useAppDispatch,
-	useAppSelector
-} from '../../services/store';
-import {
-	constructorSlice,
-	getIngredients
-} from '../../services/slices/burger-constructor';
+import { useAppSelector } from '../../services/store';
+import { allIngredientsSelector } from '../../services/selectors/burger-constructor';
 
 const maxIngredients = 6;
 
 export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
 	const location = useLocation();
-	const dispatch = useAppDispatch();
-
-	useEffect(() => {
-		dispatch(getIngredients());
-	}, []);
 
 	/** TODO: взять переменную из стора */
-	const ingredients: TIngredient[] = useAppSelector(
-		(state: RootState) => state[constructorSlice.name].allIngredients
-	);
-
-	const ingredientsByType = useAppSelector(
-		(state: RootState) => state[constructorSlice.name].ingredientsByType
-	);
+	const ingredients: TIngredient[] = useAppSelector(allIngredientsSelector);
 
 	const orderInfo = useMemo(() => {
-		console.log('useMemo ingredients', ingredients);
-		console.log('useMemo ingredientsByType', ingredientsByType);
 		if (!ingredients.length) return null;
 
 		const ingredientsInfo = order.ingredients.reduce(
