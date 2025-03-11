@@ -1,25 +1,74 @@
 import * as api from '@api';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { EIngredientType, TIngredient } from '@utils-types';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+	EIngredientType,
+	TConstructorIngredient,
+	TIngredient
+} from '@utils-types';
 
 export interface ConstructorState {
 	isLoading: boolean;
 	error: string | null;
 	currentTab: EIngredientType;
 	allIngredients: TIngredient[];
+	burgerConstructor: {
+		bun: TConstructorIngredient | null;
+		ingredients: TConstructorIngredient[];
+	};
 }
 
 const initialState: ConstructorState = {
 	isLoading: false,
 	error: null,
 	currentTab: EIngredientType.bun,
-	allIngredients: []
+	allIngredients: [],
+	burgerConstructor: {
+		bun: null,
+		ingredients: []
+	}
 };
 
 export const constructorSlice = createSlice({
 	name: 'burger-constructor',
 	initialState,
-	reducers: {},
+	selectors: {
+		burgerConstructorSelector: (state: ConstructorState) =>
+			state.burgerConstructor
+	},
+	reducers: {
+		addNewOrderIngredient: (
+			state,
+			action: PayloadAction<TConstructorIngredient>
+		) => {
+			const newItem = action.payload;
+			if (newItem.type === EIngredientType.bun) {
+				state.burgerConstructor.bun = newItem;
+			} else if (
+				newItem.type === EIngredientType.sauce ||
+				newItem.type === EIngredientType.main
+			) {
+				state.burgerConstructor.ingredients.push(newItem);
+			} else {
+				console.error('Неправильный тип ингредиента');
+			}
+		},
+		removeNewOrderIngredient: (
+			state,
+			action: PayloadAction<TConstructorIngredient>
+		) => {
+			if (action.payload.type === EIngredientType.bun) {
+				return;
+			} else if (
+				action.payload.type === EIngredientType.sauce ||
+				action.payload.type === EIngredientType.main
+			) {
+				state.burgerConstructor.ingredients =
+					state.burgerConstructor.ingredients.filter(
+						(item) => item.id !== action.payload.id
+					);
+			}
+		}
+	},
 	extraReducers: (builder) => {
 		builder.addCase(getIngredients.pending, (state) => {
 			state.isLoading = true;
@@ -38,7 +87,9 @@ export const constructorSlice = createSlice({
 
 export const getIngredients = createAsyncThunk<TIngredient[]>(
 	'burger-constructor/getIngredients',
-	async () => api.getIngredientsApi()
+	api.getIngredientsApi
 );
 
 export default constructorSlice.reducer;
+export const burgerConstructorActions = constructorSlice.actions;
+export const burgerConstructorSelectors = constructorSlice.selectors;

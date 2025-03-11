@@ -11,6 +11,8 @@ export const IngredientsCategoryUI = forwardRef<
 		<h3 className='text text_type_main-medium mt-10 mb-6' ref={titleRef}>
 			{title}
 		</h3>
+
+		{console.log('ingredientsCounters', ingredientsCounters)}
 		<ul className={styles.items} ref={ref}>
 			{ingredients.map((ingredient) => (
 				<BurgerIngredient

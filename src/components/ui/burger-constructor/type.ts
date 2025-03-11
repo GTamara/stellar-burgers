@@ -3,7 +3,7 @@ import { TOrder } from 'src/utils/data-contracts';
 
 export type BurgerConstructorUIProps = {
 	constructorItems: {
-		bun: TConstructorIngredient | undefined;
+		bun: TConstructorIngredient | null;
 		ingredients: TConstructorIngredient[];
 	};
 	orderRequest: boolean;

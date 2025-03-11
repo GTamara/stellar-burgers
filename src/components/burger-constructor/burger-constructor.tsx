@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { EIngredientType, TConstructorIngredient } from '@utils-types';
+import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useAppDispatch, useAppSelector } from '../../services/store';
 import {
@@ -9,7 +9,8 @@ import {
 } from '../../services/slices/order.slice';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { authSelectors } from '../../services/slices/auth.slice';
-import { TOrder } from 'src/utils/data-contracts';
+import { TOrder } from '../../utils/data-contracts';
+import { burgerConstructorSelectors } from '../../services/slices/burger-constructor.slice';
 
 export const BurgerConstructor: FC = () => {
 	const navigate = useNavigate();
@@ -20,19 +21,15 @@ export const BurgerConstructor: FC = () => {
 
 	/** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
 	const newOrderIngredients = useAppSelector(
-		orderSelectors.newOrderIngredientsSelector
+		burgerConstructorSelectors.burgerConstructorSelector
 	);
 
 	const constructorItems: {
-		bun: TConstructorIngredient | undefined;
+		bun: TConstructorIngredient | null;
 		ingredients: TConstructorIngredient[];
 	} = {
-		bun: newOrderIngredients.find(
-			(item) => item?.type === EIngredientType.bun
-		),
-		ingredients: newOrderIngredients.filter(
-			(item) => item?.type !== EIngredientType.bun
-		)
+		bun: newOrderIngredients.bun ?? null,
+		ingredients: newOrderIngredients.ingredients
 	};
 
 	const orderRequest: boolean = useAppSelector(
@@ -48,7 +45,14 @@ export const BurgerConstructor: FC = () => {
 
 		dispatch(orderActions.setOrderRequest(true));
 
-		dispatch(orderBurger(newOrderIngredients.map((item) => item._id)))
+		dispatch(
+			orderBurger(
+				[
+					newOrderIngredients.bun,
+					...newOrderIngredients.ingredients
+				].map((item) => (item as TConstructorIngredient)._id)
+			)
+		)
 			.unwrap()
 			.catch((e) => console.error(e))
 			.finally(() => dispatch(orderActions.setOrderRequest(false)));

@@ -39,7 +39,7 @@ export const feedSlice = createSlice({
 
 export const getFeed = createAsyncThunk<TFeedsResponse>(
 	'order/getFeeds',
-	async () => api.getFeedsApi()
+	api.getFeedsApi
 );
 
 export default feedSlice.reducer;

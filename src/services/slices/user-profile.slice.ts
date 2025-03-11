@@ -41,8 +41,9 @@ export const userProfileSlice = createSlice({
 	}
 });
 
-export const getOrders = createAsyncThunk('user-profile/getOrders', async () =>
-	api.getOrdersApi()
+export const getOrders = createAsyncThunk(
+	'user-profile/getOrders',
+	api.getOrdersApi
 );
 
 export const userProfileSliceSelectors = userProfileSlice.selectors;

@@ -6,7 +6,6 @@ import { TNewOrderResponse, TOrderResponse } from 'src/utils/data-contracts';
 export interface OrderState {
 	isLoading: boolean;
 	error: string | null;
-	newOrderIngredients: Array<TConstructorIngredient>; // TIngredient[];
 
 	orderRequest: boolean;
 	orderModalData: TNewOrderResponse | null;
@@ -17,7 +16,6 @@ export interface OrderState {
 const initialState: OrderState = {
 	isLoading: false,
 	error: null,
-	newOrderIngredients: [],
 
 	orderRequest: false,
 	orderModalData: null,
@@ -29,27 +27,12 @@ export const orderSlice = createSlice({
 	name: 'order',
 	initialState,
 	reducers: {
-		addNewOrderIngredient: (state, { payload }) => {
-			payload.id = state.newOrderIngredients.length.toString();
-			if (payload.type === EIngredientType.bun) {
-				state.newOrderIngredients = state.newOrderIngredients.filter(
-					(item) => item.type !== EIngredientType.bun
-				);
-			}
-			state.newOrderIngredients.push(payload);
-		},
-		removeNewOrderIngredient: (state, action: PayloadAction<string>) => {
-			state.newOrderIngredients = state.newOrderIngredients.filter(
-				(item) => item.id !== action.payload
-			);
-		},
 		setOrderRequest: (state, action: PayloadAction<boolean>) => {
 			state.orderRequest = action.payload;
 		}
 	},
 	selectors: {
 		isLoadingSelector: (state) => state.isLoading,
-		newOrderIngredientsSelector: (state) => state.newOrderIngredients,
 		orderRequestSelector: (state) => state.orderRequest,
 		orderModalDataSelector: (state) => state.orderModalData,
 		currentViewedOrderDataSelector: (state) => state.currentViewedOrderData

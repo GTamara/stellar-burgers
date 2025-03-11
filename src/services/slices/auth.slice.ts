@@ -124,11 +124,7 @@ export const logout = createAsyncThunk<TServerResponse<{}>>(
 
 export const getUser = createAsyncThunk<TUserResponse>(
 	'auth/getUser',
-	async () =>
-		api.getUserApi().then((res) => {
-			console.log('RES', res);
-			return res;
-		})
+	api.getUserApi
 );
 
 export const updateUser = createAsyncThunk<
