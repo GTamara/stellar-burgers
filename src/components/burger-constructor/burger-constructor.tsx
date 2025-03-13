@@ -7,10 +7,18 @@ import {
 	orderBurger,
 	orderSelectors
 } from '../../services/slices/order.slice';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import {
+	Navigate,
+	NavigateOptions,
+	useLocation,
+	useNavigate
+} from 'react-router-dom';
 import { authSelectors } from '../../services/slices/auth.slice';
 import { TOrder } from '../../utils/data-contracts';
-import { burgerConstructorSelectors } from '../../services/slices/burger-constructor.slice';
+import {
+	burgerConstructorActions,
+	burgerConstructorSelectors
+} from '../../services/slices/burger-constructor.slice';
 
 export const BurgerConstructor: FC = () => {
 	const navigate = useNavigate();
@@ -41,6 +49,32 @@ export const BurgerConstructor: FC = () => {
 	)?.order;
 
 	const onOrderClick = () => {
+		if (!isUserLoggedIn) {
+			navigate('/login', {
+				state: {
+					from: {
+						...location,
+						background: location.state?.background,
+						state: null
+					}
+				}
+				// replace: true
+			});
+			return false;
+			// return (
+			// 	<Navigate
+			// 		to='/login'
+			// 		state={{
+			// 			from: {
+			// 				...location,
+			// 				background: location.state?.background,
+			// 				state: null
+			// 			}
+			// 		}}
+			// 	/>
+			// );
+		}
+
 		if (!constructorItems.bun || orderRequest) return;
 
 		dispatch(orderActions.setOrderRequest(true));
@@ -49,32 +83,22 @@ export const BurgerConstructor: FC = () => {
 			orderBurger(
 				[
 					newOrderIngredients.bun,
+					newOrderIngredients.bun,
 					...newOrderIngredients.ingredients
 				].map((item) => (item as TConstructorIngredient)._id)
 			)
 		)
 			.unwrap()
 			.catch((e) => console.error(e))
-			.finally(() => dispatch(orderActions.setOrderRequest(false)));
-
-		if (!isUserLoggedIn) {
-			return (
-				<Navigate
-					to='/login'
-					state={{
-						from: {
-							...location,
-							background: location.state?.background,
-							state: null
-						}
-					}}
-				/>
-			);
-		}
+			.finally(() => {
+				dispatch(orderActions.setOrderRequest(false));
+				dispatch(burgerConstructorActions.clearConstructor());
+			});
 	};
 
 	const closeOrderModal = () => {
-		navigate(-1);
+		// navigate(-1);
+		dispatch(orderActions.clearOrderModalData());
 	};
 
 	const price = useMemo(

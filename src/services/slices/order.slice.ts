@@ -1,26 +1,29 @@
 import * as api from '@api';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EIngredientType, TConstructorIngredient } from '@utils-types';
-import { TNewOrderResponse, TOrderResponse } from 'src/utils/data-contracts';
+import {
+	TNewOrderResponse,
+	TOrder,
+	TOrderResponse
+} from 'src/utils/data-contracts';
 
 export interface OrderState {
 	isLoading: boolean;
 	error: string | null;
-
 	orderRequest: boolean;
 	orderModalData: TNewOrderResponse | null;
-
 	currentViewedOrderData: TOrderResponse | null;
+
+	userOrders: TOrder[];
 }
 
 const initialState: OrderState = {
 	isLoading: false,
 	error: null,
-
 	orderRequest: false,
 	orderModalData: null,
-
-	currentViewedOrderData: null
+	currentViewedOrderData: null,
+	userOrders: []
 };
 
 export const orderSlice = createSlice({
@@ -29,13 +32,18 @@ export const orderSlice = createSlice({
 	reducers: {
 		setOrderRequest: (state, action: PayloadAction<boolean>) => {
 			state.orderRequest = action.payload;
+		},
+		clearOrderModalData: (state) => {
+			state.orderModalData = null;
 		}
 	},
 	selectors: {
 		isLoadingSelector: (state) => state.isLoading,
 		orderRequestSelector: (state) => state.orderRequest,
 		orderModalDataSelector: (state) => state.orderModalData,
-		currentViewedOrderDataSelector: (state) => state.currentViewedOrderData
+		currentViewedOrderDataSelector: (state) => state.currentViewedOrderData,
+
+		userOrdersSelector: (state) => state.userOrders
 	},
 	extraReducers: (builder) => {
 		builder.addCase(orderBurger.pending, (state) => {
@@ -61,6 +69,21 @@ export const orderSlice = createSlice({
 			state.isLoading = false;
 			state.currentViewedOrderData = payload;
 		});
+
+		builder.addCase(getOrders.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(getOrders.rejected, (state, action) => {
+			state.isLoading = false;
+			state.error = `Ошибка при получении заказов. ${action.error.message}`;
+		});
+		builder.addCase(
+			getOrders.fulfilled,
+			(state, action: PayloadAction<TOrder[]>) => {
+				state.isLoading = false;
+				state.userOrders = action.payload;
+			}
+		);
 	}
 });
 
@@ -72,6 +95,11 @@ export const orderBurger = createAsyncThunk<TNewOrderResponse, string[]>(
 export const getOrderByNumber = createAsyncThunk<TOrderResponse, number>(
 	'order/getOrderByNumber',
 	async (data: number) => api.getOrderByNumberApi(data)
+);
+
+export const getOrders = createAsyncThunk(
+	'user-profile/getOrders',
+	api.getOrdersApi
 );
 
 export default orderSlice.reducer;

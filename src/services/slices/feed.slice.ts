@@ -2,13 +2,13 @@ import * as api from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TFeeds, TFeedsResponse } from 'src/utils/data-contracts';
 
-export interface OrderState {
+export interface FeedState {
 	isLoading: boolean;
 	error: string | null;
 	feeds: TFeeds;
 }
 
-const initialState: OrderState = {
+const initialState: FeedState = {
 	isLoading: false,
 	error: null,
 	feeds: { orders: [], total: 0, totalToday: 0 }
@@ -20,7 +20,8 @@ export const feedSlice = createSlice({
 	reducers: {},
 	selectors: {
 		isLoadingSelictor: (state) => state.isLoading,
-		allFeedsSelector: (state) => state.feeds
+		allFeedsSelector: (state) => state.feeds,
+		allFeedOrdersSelector: (state) => state.feeds.orders
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getFeed.pending, (state) => {
@@ -43,4 +44,4 @@ export const getFeed = createAsyncThunk<TFeedsResponse>(
 );
 
 export default feedSlice.reducer;
-export const { isLoadingSelictor, allFeedsSelector } = feedSlice.selectors;
+export const feedSelectors = feedSlice.selectors;

@@ -1,3 +1,4 @@
+import { debug } from 'console';
 import { setCookie, getCookie } from './cookie';
 import {
 	TAuthResponse,
@@ -175,6 +176,7 @@ export const resetPasswordApi = (data: { password: string; token: string }) =>
 		});
 
 export const getUserApi = () =>
+	// debugger;
 	fetchWithRefresh<TUserResponse>(`${URL}/auth/user`, {
 		headers: {
 			authorization: getCookie('accessToken')

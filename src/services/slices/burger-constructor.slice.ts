@@ -1,4 +1,5 @@
 import * as api from '@api';
+import { BurgerConstructor } from '@components';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
 	EIngredientType,
@@ -67,6 +68,15 @@ export const constructorSlice = createSlice({
 						(item) => item.id !== action.payload.id
 					);
 			}
+		},
+		clearConstructor: (state) => {
+			// state.burgerConstructor.bun = null;
+			// state.burgerConstructor.ingredients = [];
+
+			state.burgerConstructor = {
+				bun: null,
+				ingredients: []
+			};
 		}
 	},
 	extraReducers: (builder) => {

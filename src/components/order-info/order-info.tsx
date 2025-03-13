@@ -7,16 +7,37 @@ import {
 	getOrderByNumber,
 	orderSelectors
 } from '../../services/slices/order.slice';
-import { TOrderResponse } from '../../utils/data-contracts';
-import { allIngredientsSelector } from '../../services/selectors/burger-constructor';
-import { useParams } from 'react-router-dom';
+import { TOrder, TOrderResponse } from '../../utils/data-contracts';
+import { allIngredientsSelector } from '../../services/selectors/burger-constructor.selector';
+import { useLocation, useParams } from 'react-router-dom';
+import { findFeedByIdSelector } from '../../services/selectors/feed.selector';
+import { findOrderByIdSelector } from '../../services/selectors/orders.selector';
 
 export const OrderInfo: FC = () => {
 	const dispatch = useAppDispatch();
 	const params = useParams();
+	const location = useLocation();
+	const backgroundLocation = location.state?.background || null;
+
+	let popupDataSelector:
+		| typeof findOrderByIdSelector
+		| typeof findFeedByIdSelector;
+
+	if (location.pathname.startsWith('/profile/orders')) {
+		popupDataSelector = findOrderByIdSelector;
+	} else if (location.pathname.startsWith('/feed')) {
+		popupDataSelector = findFeedByIdSelector;
+	}
+
+	const popupData: TOrder | undefined = useAppSelector((state) =>
+		popupDataSelector(state, Number(params.number))
+	);
 
 	useEffect(() => {
-		dispatch(getOrderByNumber(Number(params.number)));
+		// если попап открыли по прямой ссылке
+		if (!backgroundLocation) {
+			dispatch(getOrderByNumber(Number(params.number)));
+		}
 	}, []);
 
 	/** TODO: взять переменные orderData и ingredients из стора */
@@ -29,14 +50,17 @@ export const OrderInfo: FC = () => {
 		allIngredientsSelector
 	);
 
+	const data =
+		(currentViewedOrderData?.orders[0] as TOrder) || (popupData as TOrder);
+
 	const orderData = {
-		createdAt: currentViewedOrderData?.orders[0]?.createdAt || '',
-		ingredients: currentViewedOrderData?.orders[0]?.ingredients || [],
-		_id: currentViewedOrderData?.orders[0]?._id || '',
-		status: currentViewedOrderData?.orders[0]?.status || '',
-		name: currentViewedOrderData?.orders[0]?.name || '',
-		updatedAt: currentViewedOrderData?.orders[0]?.updatedAt || '',
-		number: currentViewedOrderData?.orders[0]?.number || 0
+		createdAt: data?.createdAt || '',
+		ingredients: data?.ingredients || [],
+		_id: data?._id || '',
+		status: data?.status || '',
+		name: data?.name || '',
+		updatedAt: data?.updatedAt || '',
+		number: data?.number || 0
 	};
 
 	const ingredients: TIngredient[] = allIngredients.filter((item) =>

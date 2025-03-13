@@ -5,7 +5,7 @@ import { OrderCardProps } from './type';
 import { TIngredient } from '@utils-types';
 import { OrderCardUI } from '../ui/order-card';
 import { useAppSelector } from '../../services/store';
-import { allIngredientsSelector } from '../../services/selectors/burger-constructor';
+import { allIngredientsSelector } from '../../services/selectors/burger-constructor.selector';
 
 const maxIngredients = 6;
 
@@ -50,6 +50,7 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
 		};
 	}, [order, ingredients]);
 
+	// TODO: проверить как без этого условия
 	if (!orderInfo) return null;
 
 	return (

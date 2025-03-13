@@ -19,12 +19,28 @@ import {
 	OrderInfo,
 	ProtectedRoute
 } from '@components';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { AppDispatch, useAppDispatch } from '../../services/store';
+import {
+	NavigateFunction,
+	Route,
+	Routes,
+	To,
+	useLocation,
+	useNavigate
+} from 'react-router-dom';
+import {
+	AppDispatch,
+	useAppDispatch,
+	useAppSelector
+} from '../../services/store';
 import { useEffect } from 'react';
 import { getIngredients } from '../../services/slices/burger-constructor.slice';
-import { getFeed } from '../../services/slices/feed.slice';
-import { authActions, getUser } from '../../services/slices/auth.slice';
+import { feedSelectors, getFeed } from '../../services/slices/feed.slice';
+import {
+	authActions,
+	authSelectors,
+	getUser
+} from '../../services/slices/auth.slice';
+import { TOrder } from 'src/utils/data-contracts';
 
 const App = () => {
 	const location = useLocation();
@@ -38,11 +54,18 @@ const App = () => {
 			.catch((e) => {
 				console.error('Get user error', e);
 			})
-			.finally(() => dispatch(authActions.isAuthChecked()));
+			.finally(() => {
+				dispatch(authActions.isAuthChecked());
+				console.log('Checked');
+			});
 
 		dispatch(getFeed());
 		dispatch(getIngredients());
 	}, []);
+
+	const allFeeds: TOrder[] = useAppSelector(
+		feedSelectors.allFeedsSelector
+	).orders;
 
 	function goBack() {
 		navigate(-1);
@@ -55,6 +78,7 @@ const App = () => {
 			<Routes location={backgroundLocation || location}>
 				<Route path='/' element={<ConstructorPage />} />
 				<Route path='/feed' element={<Feed />} />
+				<Route path='/feed/:number' element={<OrderInfo />} />
 				<Route
 					path='/login'
 					element={

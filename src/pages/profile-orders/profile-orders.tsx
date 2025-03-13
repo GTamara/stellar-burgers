@@ -1,14 +1,12 @@
 import { ProfileOrdersUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
-import {
-	getOrders,
-	userProfileSliceSelectors
-} from '../../services/slices/user-profile.slice';
+
 import { useAppDispatch, useAppSelector } from '../../services/store';
+import { getOrders, orderSelectors } from '../../services/slices/order.slice';
 
 export const ProfileOrders: FC = () => {
 	/** TODO: взять переменную из стора */
-	const orders = useAppSelector(userProfileSliceSelectors.ordersSelector);
+	const orders = useAppSelector(orderSelectors.userOrdersSelector);
 
 	const dispatch = useAppDispatch();
 

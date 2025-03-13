@@ -89,6 +89,22 @@ export const authSlice = createSlice({
 			state.authData = null;
 			state.user = null;
 		});
+
+		builder.addCase(updateUser.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(updateUser.rejected, (state, action) => {
+			state.isLoading = false;
+			state.error = `Ошибка. ${action.error.message}`;
+		});
+		builder.addCase(
+			updateUser.fulfilled,
+			(state, action: PayloadAction<TUserResponse>) => {
+				state.isLoading = false;
+				state.authData = null;
+				state.user = action.payload.user;
+			}
+		);
 	}
 });
 
