@@ -51,7 +51,7 @@ export const ProtectedRoute = ({
 			/>
 		);
 	}
-	// debugger
+
 	console.log('RENDER COMPONENT');
 
 	return children ? children : <Outlet />;

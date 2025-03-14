@@ -15,15 +15,13 @@ export interface AuthState {
 	isLoading: boolean;
 	user: TUser | null;
 	error: string | null;
-	authData: TAuthResponse | null;
 }
 
 const initialState: AuthState = {
 	isAuthChecked: false,
 	isLoading: false,
 	user: null,
-	error: null,
-	authData: null
+	error: null
 };
 
 export const authSlice = createSlice({
@@ -38,8 +36,7 @@ export const authSlice = createSlice({
 		isLoadingSelector: (state) => state.isLoading,
 		isAuthCheckedSelector: (state) => state.isAuthChecked,
 		userSelector: (state) => state.user,
-		errorSelector: (state) => state.error,
-		authDataSelector: (state) => state.authData
+		errorSelector: (state) => state.error
 	},
 	extraReducers: (builder) => {
 		builder.addCase(register.pending, (state) => {
@@ -53,7 +50,6 @@ export const authSlice = createSlice({
 			register.fulfilled,
 			(state, action: PayloadAction<TAuthResponse>) => {
 				state.isLoading = false;
-				state.authData = action.payload;
 				state.user = action.payload.user;
 			}
 		);
@@ -72,7 +68,6 @@ export const authSlice = createSlice({
 			(state, action: PayloadAction<TAuthResponse>) => {
 				state.isAuthChecked = true;
 				state.isLoading = false;
-				state.authData = action.payload;
 				state.user = action.payload.user;
 			}
 		);
@@ -86,7 +81,6 @@ export const authSlice = createSlice({
 		});
 		builder.addCase(logout.fulfilled, (state) => {
 			state.isLoading = false;
-			state.authData = null;
 			state.user = null;
 		});
 
@@ -101,7 +95,21 @@ export const authSlice = createSlice({
 			updateUser.fulfilled,
 			(state, action: PayloadAction<TUserResponse>) => {
 				state.isLoading = false;
-				state.authData = null;
+				state.user = action.payload.user;
+			}
+		);
+
+		builder.addCase(getUser.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(getUser.rejected, (state, action) => {
+			state.isLoading = false;
+			state.error = `Ошибка. ${action.error.message}`;
+		});
+		builder.addCase(
+			getUser.fulfilled,
+			(state, action: PayloadAction<TUserResponse>) => {
+				state.isLoading = false;
 				state.user = action.payload.user;
 			}
 		);

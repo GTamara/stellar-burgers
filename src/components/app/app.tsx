@@ -55,8 +55,8 @@ const App = () => {
 				console.error('Get user error', e);
 			})
 			.finally(() => {
+				console.log('Get user finally');
 				dispatch(authActions.isAuthChecked());
-				console.log('Checked');
 			});
 
 		dispatch(getFeed());
