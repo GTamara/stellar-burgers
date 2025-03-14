@@ -1,14 +1,20 @@
 import { FC } from 'react';
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
+import { useParams } from 'react-router-dom';
+import { useAppSelector } from '../../services/store';
+import { findIngredientByIdSelector } from '../../services/selectors/burger-constructor.selector';
 
 export const IngredientDetails: FC = () => {
-  /** TODO: взять переменную из стора */
-  const ingredientData = null;
+	const ingredientId = useParams().id;
+	/** TODO: взять переменную из стора */
 
-  if (!ingredientData) {
-    return <Preloader />;
-  }
+	const ingredientData = useAppSelector((state) =>
+		findIngredientByIdSelector(state, ingredientId)
+	);
+	if (!ingredientData) {
+		return <Preloader />;
+	}
 
-  return <IngredientDetailsUI ingredientData={ingredientData} />;
+	return <IngredientDetailsUI ingredientData={ingredientData} />;
 };
