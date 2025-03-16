@@ -77,6 +77,15 @@ export const constructorSlice = createSlice({
 				bun: null,
 				ingredients: []
 			};
+		},
+		reorderConstructor: (
+			state,
+			{ payload }: PayloadAction<{ from: number; to: number }>
+		) => {
+			const { from, to } = payload;
+			const ingredients = [...state.burgerConstructor.ingredients];
+			ingredients.splice(to, 0, ingredients.splice(from, 1)[0]);
+			state.burgerConstructor.ingredients = ingredients;
 		}
 	},
 	extraReducers: (builder) => {
