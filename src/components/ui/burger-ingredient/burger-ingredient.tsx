@@ -9,10 +9,34 @@ import {
 } from '@zlden/react-developer-burger-ui-components';
 
 import { TBurgerIngredientUIProps } from './type';
+import { burgerConstructorActions } from '../../../services/slices/burger-constructor.slice';
+import { useAppDispatch } from '../../../services/store';
+import { TConstructorIngredient } from '@utils-types';
 
 export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
-	({ ingredient, count, handleAdd, locationState }) => {
+	({ ingredient, count, handleAdd, dragEndAction, locationState }) => {
 		const { image, price, name, _id } = ingredient;
+		const dispatch = useAppDispatch();
+
+		const onDragOver = (e: React.DragEvent<HTMLImageElement>) => {
+			e.preventDefault();
+			return false;
+		};
+
+		const onDragEnd = (e: React.DragEvent<HTMLImageElement>) => {
+			e.preventDefault();
+			dragEndAction();
+			return false;
+		};
+
+		const startHandler = (e: React.DragEvent<HTMLImageElement>) => {
+			e.dataTransfer.dropEffect = 'none';
+			dispatch(
+				burgerConstructorActions.setDraggingElement(
+					ingredient as TConstructorIngredient
+				)
+			);
+		};
 
 		return (
 			<li className={styles.container}>
@@ -26,6 +50,10 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
 						className={styles.img}
 						src={image}
 						alt='картинка ингредиента.'
+						draggable='true'
+						onDragStart={startHandler}
+						onDragOver={onDragOver}
+						onDragEnd={onDragEnd}
 					/>
 					<div className={`${styles.cost} mt-2 mb-2`}>
 						<p className='text text_type_digits-default mr-2'>

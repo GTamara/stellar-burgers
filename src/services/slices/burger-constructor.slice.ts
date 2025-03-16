@@ -16,6 +16,7 @@ export interface ConstructorState {
 		bun: TConstructorIngredient | null;
 		ingredients: TConstructorIngredient[];
 	};
+	draggingElement: TConstructorIngredient | null;
 }
 
 const initialState: ConstructorState = {
@@ -26,7 +27,8 @@ const initialState: ConstructorState = {
 	burgerConstructor: {
 		bun: null,
 		ingredients: []
-	}
+	},
+	draggingElement: null
 };
 
 export const constructorSlice = createSlice({
@@ -34,7 +36,9 @@ export const constructorSlice = createSlice({
 	initialState,
 	selectors: {
 		burgerConstructorSelector: (state: ConstructorState) =>
-			state.burgerConstructor
+			state.burgerConstructor,
+		draggingElementSelector: (state: ConstructorState) =>
+			state.draggingElement
 	},
 	reducers: {
 		addNewOrderIngredient: (
@@ -77,6 +81,12 @@ export const constructorSlice = createSlice({
 				bun: null,
 				ingredients: []
 			};
+		},
+		setDraggingElement: (
+			state,
+			action: PayloadAction<TConstructorIngredient>
+		) => {
+			state.draggingElement = action.payload;
 		}
 	},
 	extraReducers: (builder) => {

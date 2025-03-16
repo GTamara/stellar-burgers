@@ -19,11 +19,16 @@ import {
 	burgerConstructorActions,
 	burgerConstructorSelectors
 } from '../../services/slices/burger-constructor.slice';
+import { v4 as uuidv4 } from 'uuid';
 
 export const BurgerConstructor: FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
+
+	const draggingElement = useAppSelector(
+		burgerConstructorSelectors.draggingElementSelector
+	);
 
 	const isUserLoggedIn = !!useAppSelector(authSelectors.userSelector);
 
@@ -58,21 +63,8 @@ export const BurgerConstructor: FC = () => {
 						state: null
 					}
 				}
-				// replace: true
 			});
 			return false;
-			// return (
-			// 	<Navigate
-			// 		to='/login'
-			// 		state={{
-			// 			from: {
-			// 				...location,
-			// 				background: location.state?.background,
-			// 				state: null
-			// 			}
-			// 		}}
-			// 	/>
-			// );
 		}
 
 		if (!constructorItems.bun || orderRequest) return;
@@ -111,6 +103,14 @@ export const BurgerConstructor: FC = () => {
 		[constructorItems]
 	);
 
+	const dropAction = () => {
+		dispatch(
+			burgerConstructorActions.addNewOrderIngredient(
+				draggingElement as TConstructorIngredient
+			)
+		);
+	};
+
 	return (
 		<BurgerConstructorUI
 			price={price}
@@ -119,6 +119,7 @@ export const BurgerConstructor: FC = () => {
 			orderModalData={orderModalData ?? null}
 			onOrderClick={onOrderClick}
 			closeOrderModal={closeOrderModal}
+			dropAction={dropAction}
 		/>
 	);
 };

@@ -6,6 +6,7 @@ import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
 import { useAppDispatch } from '../../services/store';
 import { burgerConstructorActions } from '../../services/slices/burger-constructor.slice';
+import { TConstructorIngredient } from '@utils-types';
 
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
 	({ ingredient, count }) => {
@@ -20,12 +21,22 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
 				})
 			);
 		};
+
+		const dragEndAction = () => {
+			dispatch(
+				burgerConstructorActions.setDraggingElement(
+					ingredient as TConstructorIngredient
+				)
+			);
+		};
+
 		return (
 			<BurgerIngredientUI
 				ingredient={ingredient}
 				count={count}
 				locationState={{ background: location }}
 				handleAdd={handleAdd}
+				dragEndAction={dragEndAction}
 			/>
 		);
 	}
