@@ -1,4 +1,4 @@
-import { TOrder } from 'src/utils/data-contracts';
+import { TOrder } from '../../../../utils/data-contracts';
 
 export type FeedUIProps = {
 	orders: TOrder[];

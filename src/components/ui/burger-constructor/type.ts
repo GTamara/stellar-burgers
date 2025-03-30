@@ -1,4 +1,4 @@
-import { TConstructorIngredient } from '@utils-types';
+import { TConstructorIngredient, TIngredient } from '@utils-types';
 import { TOrder } from 'src/utils/data-contracts';
 
 export type BurgerConstructorUIProps = {
@@ -8,7 +8,11 @@ export type BurgerConstructorUIProps = {
 	};
 	orderRequest: boolean;
 	price: number;
-	orderModalData: TOrder | null;
+	orderModalData:
+		| (Omit<TOrder, 'ingredients'> & {
+				ingredients: TIngredient[];
+		  })
+		| null;
 	onOrderClick: () => void;
 	closeOrderModal: () => void;
 };

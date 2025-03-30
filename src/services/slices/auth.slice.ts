@@ -7,7 +7,7 @@ import {
 	TRegisterData,
 	TServerResponse,
 	TUserResponse
-} from 'src/utils/data-contracts';
+} from '../../utils/data-contracts';
 import { deleteCookie, setCookie } from '../../utils/cookie';
 
 export interface AuthState {
@@ -17,7 +17,7 @@ export interface AuthState {
 	error: string | null;
 }
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
 	isAuthChecked: false,
 	isLoading: false,
 	user: null,
@@ -39,80 +39,87 @@ export const authSlice = createSlice({
 		errorSelector: (state) => state.error
 	},
 	extraReducers: (builder) => {
-		builder.addCase(register.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(register.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка регистрации. ${action.error.message}`;
-		});
-		builder.addCase(
-			register.fulfilled,
-			(state, action: PayloadAction<TAuthResponse>) => {
+		builder
+			.addCase(register.pending, (state) => {
+				state.isLoading = true;
+				state.error = null;
+			})
+			.addCase(register.rejected, (state, action) => {
 				state.isLoading = false;
-				state.user = action.payload.user;
-			}
-		);
+				state.error = `Ошибка регистрации. ${action.error.message}`;
+			})
+			.addCase(
+				register.fulfilled,
+				(state, action: PayloadAction<TAuthResponse>) => {
+					state.isLoading = false;
+					state.user = action.payload.user;
+					state.error = null;
+				}
+			);
 
-		builder.addCase(login.pending, (state) => {
-			state.isAuthChecked = false;
-			state.isLoading = true;
-		});
-		builder.addCase(login.rejected, (state, action) => {
-			state.isAuthChecked = true;
-			state.isLoading = false;
-			state.error = `Ошибка авторизации. ${action.error.message}`;
-		});
-		builder.addCase(
-			login.fulfilled,
-			(state, action: PayloadAction<TAuthResponse>) => {
+		builder
+			.addCase(login.pending, (state) => {
+				state.isAuthChecked = false;
+				state.isLoading = true;
+			})
+			.addCase(login.rejected, (state, action) => {
 				state.isAuthChecked = true;
 				state.isLoading = false;
-				state.user = action.payload.user;
-			}
-		);
+				state.error = `Ошибка авторизации. ${action.error.message}`;
+			})
+			.addCase(
+				login.fulfilled,
+				(state, action: PayloadAction<TAuthResponse>) => {
+					state.isAuthChecked = true;
+					state.isLoading = false;
+					state.user = action.payload.user;
+				}
+			);
 
-		builder.addCase(logout.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(logout.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка. ${action.error.message}`;
-		});
-		builder.addCase(logout.fulfilled, (state) => {
-			state.isLoading = false;
-			state.user = null;
-		});
-
-		builder.addCase(updateUser.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(updateUser.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка. ${action.error.message}`;
-		});
-		builder.addCase(
-			updateUser.fulfilled,
-			(state, action: PayloadAction<TUserResponse>) => {
+		builder
+			.addCase(logout.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(logout.rejected, (state, action) => {
 				state.isLoading = false;
-				state.user = action.payload.user;
-			}
-		);
-
-		builder.addCase(getUser.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(getUser.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка. ${action.error.message}`;
-		});
-		builder.addCase(
-			getUser.fulfilled,
-			(state, action: PayloadAction<TUserResponse>) => {
+				state.error = `Ошибка. ${action.error.message}`;
+			})
+			.addCase(logout.fulfilled, (state) => {
 				state.isLoading = false;
-				state.user = action.payload.user;
-			}
-		);
+				state.user = null;
+			});
+
+		builder
+			.addCase(updateUser.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(updateUser.rejected, (state, action) => {
+				state.isLoading = false;
+				state.error = `Ошибка. ${action.error.message}`;
+			})
+			.addCase(
+				updateUser.fulfilled,
+				(state, action: PayloadAction<TUserResponse>) => {
+					state.isLoading = false;
+					state.user = action.payload.user;
+				}
+			);
+
+		builder
+			.addCase(getUser.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(getUser.rejected, (state, action) => {
+				state.isLoading = false;
+				state.error = `Ошибка. ${action.error.message}`;
+			})
+			.addCase(
+				getUser.fulfilled,
+				(state, action: PayloadAction<TUserResponse>) => {
+					state.isLoading = false;
+					state.user = action.payload.user;
+				}
+			);
 	}
 });
 

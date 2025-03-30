@@ -1,15 +1,15 @@
 import * as api from '@api';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { EIngredientType, TConstructorIngredient } from '@utils-types';
 import {
+	TFeedsResponse,
 	TNewOrderResponse,
 	TOrder,
 	TOrderResponse
-} from 'src/utils/data-contracts';
+} from '../../utils/data-contracts';
 
 export interface OrderState {
 	isLoading: boolean;
-	error: string | null;
+	error: Error | string | null;
 	orderRequest: boolean;
 	orderModalData: TNewOrderResponse | null;
 	currentViewedOrderData: TOrderResponse | null;
@@ -17,7 +17,7 @@ export interface OrderState {
 	userOrders: TOrder[];
 }
 
-const initialState: OrderState = {
+export const initialState: OrderState = {
 	isLoading: false,
 	error: null,
 	orderRequest: false,
@@ -46,44 +46,53 @@ export const orderSlice = createSlice({
 		userOrdersSelector: (state) => state.userOrders
 	},
 	extraReducers: (builder) => {
-		builder.addCase(orderBurger.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(orderBurger.rejected, (state) => {
-			state.isLoading = false;
-			state.error = state.error;
-		});
-		builder.addCase(orderBurger.fulfilled, (state, { payload }) => {
-			state.isLoading = false;
-			state.orderModalData = payload;
-		});
-
-		builder.addCase(getOrderByNumber.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(getOrderByNumber.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка получения данных заказа. ${action.error.message}`;
-		});
-		builder.addCase(getOrderByNumber.fulfilled, (state, { payload }) => {
-			state.isLoading = false;
-			state.currentViewedOrderData = payload;
-		});
-
-		builder.addCase(getOrders.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(getOrders.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка при получении заказов. ${action.error.message}`;
-		});
-		builder.addCase(
-			getOrders.fulfilled,
-			(state, action: PayloadAction<TOrder[]>) => {
+		builder
+			.addCase(orderBurger.pending, (state) => {
+				state.isLoading = true;
+				state.error = null;
+			})
+			.addCase(orderBurger.rejected, (state, action) => {
 				state.isLoading = false;
-				state.userOrders = action.payload;
-			}
-		);
+				state.error = `Ошибка при оформлении заказа. ${action.error.message}`;
+			})
+			.addCase(orderBurger.fulfilled, (state, { payload }) => {
+				state.isLoading = false;
+				state.orderModalData = payload;
+				state.error = null;
+			});
+
+		builder
+			.addCase(getOrderByNumber.pending, (state) => {
+				state.isLoading = true;
+				state.error = null;
+			})
+			.addCase(getOrderByNumber.rejected, (state, action) => {
+				state.isLoading = false;
+				state.error = `Ошибка получения данных заказа. ${action.error.message}`;
+			})
+			.addCase(getOrderByNumber.fulfilled, (state, { payload }) => {
+				state.isLoading = false;
+				state.currentViewedOrderData = payload;
+				state.error = null;
+			});
+
+		builder
+			.addCase(getOrders.pending, (state) => {
+				state.isLoading = true;
+				state.error = null;
+			})
+			.addCase(getOrders.rejected, (state, action) => {
+				state.isLoading = false;
+				state.error = `Ошибка при получении заказов. ${action.error.message}`;
+			})
+			.addCase(
+				getOrders.fulfilled,
+				(state, action: PayloadAction<TOrder[]>) => {
+					state.isLoading = false;
+					state.userOrders = action.payload;
+					state.error = null;
+				}
+			);
 	}
 });
 

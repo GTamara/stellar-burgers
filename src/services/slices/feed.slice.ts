@@ -1,14 +1,14 @@
 import * as api from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TFeeds, TFeedsResponse } from 'src/utils/data-contracts';
+import { TFeeds, TFeedsResponse } from '../../utils/data-contracts';
 
 export interface FeedState {
 	isLoading: boolean;
-	error: string | null;
+	error: Error | string | null;
 	feeds: TFeeds;
 }
 
-const initialState: FeedState = {
+export const initialState: FeedState = {
 	isLoading: false,
 	error: null,
 	feeds: { orders: [], total: 0, totalToday: 0 }
@@ -24,22 +24,28 @@ export const feedSlice = createSlice({
 		allFeedOrdersSelector: (state) => state.feeds.orders
 	},
 	extraReducers: (builder) => {
-		builder.addCase(getFeed.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(getFeed.rejected, (state, action) => {
-			state.isLoading = false;
-			state.error = `Ошибка получения списка заказов. ${action.error.message}`;
-		});
-		builder.addCase(getFeed.fulfilled, (state, { payload }) => {
-			state.isLoading = false;
-			state.feeds = payload;
-		});
+		builder
+			.addCase(getFeed.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(getFeed.rejected, (state, action) => {
+				state.isLoading = false;
+				state.error = `Ошибка получения списка заказов. ${action.error.message}`;
+			})
+			.addCase(getFeed.fulfilled, (state, { payload }) => {
+				state.isLoading = false;
+				const feeds: TFeeds = Object.fromEntries(
+					Object.entries(payload).filter(
+						([key, _]) => key !== 'success'
+					)
+				) as TFeeds;
+				state.feeds = feeds;
+			});
 	}
 });
 
 export const getFeed = createAsyncThunk<TFeedsResponse>(
-	'order/getFeeds',
+	'feed/getFeeds',
 	api.getFeedsApi
 );
 
