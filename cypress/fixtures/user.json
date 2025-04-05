@@ -1,0 +1,9 @@
+{
+	"success": true,
+	"accessToken": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3Y2M0YzE3MTMzYWNkMDAxYmU1NjRjYSIsImlhdCI6MTc0MzQ0MTE2OCwiZXhwIjoxNzQzNDQyMzY4fQ.BMj9HO0V0N-T8uYtxyebY18ny_xEt8llSmOnSGcoFLY",
+	"refreshToken": "8ce4030bf3a8a20d90a6cc2c1e57f5391429973ffb6b5e583ad41c09b1b53cd2ca54147b417edc51",
+	"user": {
+		"email": "goodluck.tamara@yandex.ru",
+		"name": "Тамара"
+	}
+}

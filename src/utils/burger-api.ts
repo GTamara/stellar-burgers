@@ -1,8 +1,8 @@
-import { debug } from 'console';
 import { setCookie, getCookie } from './cookie';
 import {
 	TAuthResponse,
 	TFeedsResponse,
+	TIngredientsResponse,
 	TLoginData,
 	TNewOrderResponse,
 	TOrderResponse,
@@ -10,7 +10,6 @@ import {
 	TServerResponse,
 	TUserResponse
 } from './data-contracts';
-import { TIngredient } from './types';
 
 const URL = 'https://norma.nomoreparties.space/api';
 
@@ -64,10 +63,6 @@ export const fetchWithRefresh = async <T>(
 	}
 };
 
-type TIngredientsResponse = TServerResponse<{
-	data: TIngredient[];
-}>;
-
 export const getIngredientsApi = () =>
 	fetch(`${URL}/ingredients`)
 		.then((res) => checkResponse<TIngredientsResponse>(res))
@@ -96,7 +91,9 @@ export const getOrdersApi = () =>
 		return Promise.reject(data);
 	});
 
-export const orderBurgerApi = (data: string[]) =>
+export const orderBurgerApi: (data: string[]) => Promise<TNewOrderResponse> = (
+	data: string[]
+) =>
 	fetchWithRefresh<TNewOrderResponse>(`${URL}/orders`, {
 		method: 'POST',
 		headers: {

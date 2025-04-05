@@ -1,5 +1,4 @@
 import * as api from '@api';
-import { BurgerConstructor } from '@components';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
 	EIngredientType,
@@ -9,7 +8,7 @@ import {
 
 export interface ConstructorState {
 	isLoading: boolean;
-	error: string | null;
+	error: Error | string | null;
 	currentTab: EIngredientType;
 	allIngredients: TIngredient[];
 	burgerConstructor: {
@@ -18,7 +17,7 @@ export interface ConstructorState {
 	};
 }
 
-const initialState: ConstructorState = {
+export const initialState: ConstructorState = {
 	isLoading: false,
 	error: null,
 	currentTab: EIngredientType.bun,
@@ -91,15 +90,17 @@ export const constructorSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(getIngredients.pending, (state) => {
 			state.isLoading = true;
+			state.error = null;
 		});
 		builder.addCase(getIngredients.rejected, (state, action) => {
 			state.isLoading = false;
-			state.error = action.error.message ?? null;
+			state.error = action.error.message ?? '';
 		});
 		builder.addCase(getIngredients.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.currentTab = EIngredientType.bun;
 			state.allIngredients = action.payload;
+			state.error = null;
 		});
 	}
 });

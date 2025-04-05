@@ -11,12 +11,12 @@ import { orderSlice } from './slices/order.slice';
 import { feedSlice } from './slices/feed.slice';
 import { authSlice } from './slices/auth.slice';
 
-const rootReducer = combineSlices(
+export const rootReducer = combineSlices(
 	constructorSlice,
 	orderSlice,
 	feedSlice,
 	authSlice
-); // Заменить на импорт настоящего редьюсера
+);
 
 const store = configureStore({
 	reducer: rootReducer,

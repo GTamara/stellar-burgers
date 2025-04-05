@@ -35,11 +35,7 @@ import {
 import { useEffect } from 'react';
 import { getIngredients } from '../../services/slices/burger-constructor.slice';
 import { feedSelectors, getFeed } from '../../services/slices/feed.slice';
-import {
-	authActions,
-	authSelectors,
-	getUser
-} from '../../services/slices/auth.slice';
+import { authActions, getUser } from '../../services/slices/auth.slice';
 import { TOrder } from 'src/utils/data-contracts';
 
 const App = () => {

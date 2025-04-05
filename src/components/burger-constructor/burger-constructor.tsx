@@ -7,14 +7,8 @@ import {
 	orderBurger,
 	orderSelectors
 } from '../../services/slices/order.slice';
-import {
-	Navigate,
-	NavigateOptions,
-	useLocation,
-	useNavigate
-} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { authSelectors } from '../../services/slices/auth.slice';
-import { TOrder } from '../../utils/data-contracts';
 import {
 	burgerConstructorActions,
 	burgerConstructorSelectors
@@ -44,7 +38,7 @@ export const BurgerConstructor: FC = () => {
 		orderSelectors.orderRequestSelector
 	);
 
-	const orderModalData: TOrder | undefined = useAppSelector(
+	const orderModalData = useAppSelector(
 		orderSelectors.orderModalDataSelector
 	)?.order;
 

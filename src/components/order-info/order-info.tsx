@@ -42,16 +42,14 @@ export const OrderInfo: FC = () => {
 
 	/** TODO: взять переменные orderData и ingredients из стора */
 
-	const currentViewedOrderData: TOrderResponse | null = useAppSelector(
-		orderSelectors.currentViewedOrderDataSelector
-	);
-
 	const allIngredients: TIngredient[] = useAppSelector(
 		allIngredientsSelector
 	);
 
-	const data =
-		(currentViewedOrderData?.orders[0] as TOrder) || (popupData as TOrder);
+	const data: TOrder =
+		// currentViewedOrderData?.orders[0]
+		// ||
+		popupData as TOrder;
 
 	const orderData = {
 		createdAt: data?.createdAt || '',
@@ -68,7 +66,7 @@ export const OrderInfo: FC = () => {
 	);
 
 	/* Готовим данные для отображения */
-	const orderInfo = useMemo(() => {
+	let orderInfo = useMemo(() => {
 		if (!orderData || !ingredients.length) return null;
 
 		const date = new Date(orderData.createdAt);
@@ -110,6 +108,12 @@ export const OrderInfo: FC = () => {
 			total
 		};
 	}, [orderData, ingredients]);
+
+	if (!backgroundLocation) {
+		const orderInfo: TOrderResponse | null = useAppSelector(
+			orderSelectors.currentViewedOrderDataSelector
+		);
+	}
 
 	if (!orderInfo) {
 		return <Preloader />;
