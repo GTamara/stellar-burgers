@@ -1,12 +1,8 @@
 import { Interception } from 'cypress/types/net-stubbing';
 import { TIngredientsResponse } from '../../src/utils/data-contracts';
 import { ConstructorSelectors } from 'cypress/selectors/constructor-selectors';
-import { TIngredient } from '@utils-types';
-import { debug, log } from 'console';
-import { contains } from 'cypress/types/jquery';
 
 describe('Add ingrediends to constructor', () => {
-	let ingredientsArray: TIngredient[] = [];
 	beforeEach(() => {
 		cy.intercept<TIngredientsResponse>('GET', 'api/ingredients', {
 			fixture: 'ingredients.json'
@@ -26,10 +22,8 @@ describe('Add ingrediends to constructor', () => {
 				}: Interception<void, TIngredientsResponse>) => {
 					assert.isDefined(response && response.body.data);
 					if (response) {
-						ingredientsArray = response.body.data;
+						console.log(response.body.data);
 					}
-
-					// console.log(request, response);
 				}
 			)
 			.its('response.statusCode')
@@ -48,14 +42,14 @@ describe('Add ingrediends to constructor', () => {
 			.find('li', { timeout: 10000 })
 			.first()
 			.should('be.visible')
-			.then(($firstBunsCard) => {
+			.then(($firstBunCard) => {
 				/* кликнуть кнопку карточки, чтобы добавить булку в конструктор */
-				const bunName = $firstBunsCard
+				const bunName = $firstBunCard
 					.find(ConstructorSelectors.INGREDIENT_CARD_NAME)
 					.text();
 				expect(bunName).to.be.equal(bunTestName);
 
-				$firstBunsCard
+				$firstBunCard
 					.find(ConstructorSelectors.INGREDIENT_CARD_ADD_BUTTON)
 					.click();
 			});
@@ -148,5 +142,60 @@ describe('Add ingrediends to constructor', () => {
 			.each(($item) => {
 				cy.wrap($item).should('contain', mainTestName);
 			});
+	});
+});
+
+describe.only('constructor modal works as expected', () => {
+	beforeEach(() => {
+		cy.intercept('GET', 'api/ingredients', {
+			fixture: 'ingredients.json'
+		}).as('getIngredientsResponse');
+		cy.intercept('GET', 'api/auth/user', { fixture: 'user.json' }).as(
+			'getUserResponse'
+		);
+		cy.visit('/');
+	});
+
+	it('Ingredient details modal opened after card click', () => {
+		/* Кликнуть для разнообразия вторую карточку */
+		cy.get(ConstructorSelectors.INGREDIENT_CARD)
+			.eq(1)
+			.should('be.visible')
+			.click();
+
+		/* Проверить, что модалка открылась */
+		cy.get(ConstructorSelectors.POPUP)
+			.should('be.visible')
+			.should('contain', 'Детали ингредиента');
+	});
+
+	it('Ingredient details modal closed after close button click', () => {
+		/* Кликнуть для разнообразия вторую карточку */
+		cy.get(ConstructorSelectors.INGREDIENT_CARD)
+			.eq(1)
+			.should('be.visible')
+			.click();
+
+		/* Найти кнопку закрытия попапа и кликнуть ее */
+		cy.get(ConstructorSelectors.POPUP_CLOSE_BUTTON)
+			.should('be.visible')
+			.click();
+
+		/* Проверить, что модалка закрылась */
+		cy.get(ConstructorSelectors.POPUP).should('not.exist');
+	});
+
+	it('Ingredient details modal closed after overlay click', () => {
+		/* Кликнуть для разнообразия вторую карточку */
+		cy.get(ConstructorSelectors.INGREDIENT_CARD)
+			.eq(1)
+			.should('be.visible')
+			.click();
+
+		/* Найти оверлей и кликнуть */
+		cy.get(ConstructorSelectors.POPUP_OVERLAY).click({ force: true });
+
+		/* Проверить, что модалка закрылась */
+		cy.get(ConstructorSelectors.POPUP).should('not.exist');
 	});
 });
